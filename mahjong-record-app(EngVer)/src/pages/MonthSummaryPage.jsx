@@ -11,22 +11,26 @@ function MonthSummaryPage() {
   const [selectedYear, setSelectedYear] = useState("all");
 
   const availableYears = useMemo(() => getAvailableYears(records), [records]);
-  const monthSummary = useMemo(
-    () => getMonthSummary(records, selectedYear),
-    [records, selectedYear]
-  );
+
+  const monthSummary = useMemo(() => {
+    return getMonthSummary(records, selectedYear);
+  }, [records, selectedYear]);
 
   return (
     <Layout title="Month Summary">
       <section className="panel">
         <h2>Filter by Year</h2>
+
         <div className="filter-row">
           <label>
             Year
-            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+            >
               <option value="all">All Years</option>
               {availableYears.map((year) => (
-                <option key={year} value={year}>
+                <option key={year} value={String(year)}>
                   {year}
                 </option>
               ))}
@@ -35,7 +39,11 @@ function MonthSummaryPage() {
         </div>
       </section>
 
-      <SummarySection title="Monthly Summary Cards" items={monthSummary} type="month" />
+      <SummarySection
+        title="Monthly Summary Cards"
+        items={monthSummary}
+        type="month"
+      />
     </Layout>
   );
 }

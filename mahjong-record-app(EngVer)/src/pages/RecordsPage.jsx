@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import RecordForm from "../components/RecordForm";
 import RecordTable from "../components/RecordTable";
@@ -10,6 +11,8 @@ const STORAGE_KEY = "mahjong-records-v1";
 
 function RecordsPage() {
   const [records, setRecords] = useLocalStorage(STORAGE_KEY, []);
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [selectedYear, setSelectedYear] = useState("all");
   const [selectedMonth, setSelectedMonth] = useState("all");
 
@@ -32,9 +35,33 @@ function RecordsPage() {
 
   const availableYears = useMemo(() => getAvailableYears(records), [records]);
 
+  useEffect(() => {
+    const yearFromUrl = searchParams.get("year");
+    const monthFromUrl = searchParams.get("month");
+
+    if (yearFromUrl) {
+      setSelectedYear(yearFromUrl);
+    } else {
+      setSelectedYear("all");
+    }
+
+    if (monthFromUrl) {
+      setSelectedMonth(monthFromUrl);
+    } else {
+      setSelectedMonth("all");
+    }
+  }, [searchParams]);
+
   const filteredRecords = useMemo(() => {
     return getFilteredRecords(records, selectedYear, selectedMonth);
   }, [records, selectedYear, selectedMonth]);
+
+  function updateUrlParams(year, month) {
+    setSearchParams({
+      year,
+      month,
+    });
+  }
 
   function resetAddForm() {
     setAddFormData({
@@ -153,6 +180,16 @@ function RecordsPage() {
     }
   }
 
+  function handleYearChange(value) {
+    setSelectedYear(value);
+    updateUrlParams(value, "all");
+  }
+
+  function handleMonthChange(value) {
+    setSelectedMonth(value);
+    updateUrlParams(selectedYear, value);
+  }
+
   return (
     <Layout title="Records">
       <RecordForm
@@ -171,14 +208,11 @@ function RecordsPage() {
             Year
             <select
               value={selectedYear}
-              onChange={(e) => {
-                setSelectedYear(e.target.value);
-                setSelectedMonth("all");
-              }}
+              onChange={(e) => handleYearChange(e.target.value)}
             >
               <option value="all">All Years</option>
               {availableYears.map((year) => (
-                <option key={year} value={year}>
+                <option key={year} value={String(year)}>
                   {year}
                 </option>
               ))}
@@ -189,7 +223,7 @@ function RecordsPage() {
             Month
             <select
               value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
+              onChange={(e) => handleMonthChange(e.target.value)}
             >
               <option value="all">All Months</option>
               <option value="1">January</option>
