@@ -291,3 +291,31 @@ th {
 .modal-close-btn:hover {
   background: #d1d5db;
 }
+
+.summary-link-card {
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.summary-link-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+  border-color: #2563eb;
+}
+
+.summary-link-card h3,
+.summary-link-card p {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.summary-card-hint {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
